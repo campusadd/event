@@ -202,6 +202,8 @@ section>.sec-h h2::before{content:counter(sec,decimal-leading-zero);font-family:
 .talks li::before{content:"#";font-family:var(--f-mono);color:var(--accent);margin-right:6px}
 .flow li b{font-family:var(--f-mono)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}html{scroll-behavior:auto}}
+.opening{pointer-events:none;opacity:.7}
+.openmsg{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:50;max-width:480px;margin:0 auto;background:#26303d;color:#fff;border-radius:14px;padding:12px 16px;font-size:14px;font-weight:700;text-align:center;box-shadow:0 10px 30px -10px rgba(0,0,0,.4)}
 </style>
 </head>
 <body>
@@ -334,6 +336,16 @@ fetch(API).then(r => r.json()).then(d => {
   p.textContent = t; p.className = "pill " + cls;
   if (cls !== "ok") { $("#st2").textContent = t === "満席" ? "定員に達したため、申込を締め切りました" : "申込の受付は終了しました"; ["#go1", "#go2"].forEach(q => { $(q).classList.add("off"); $(q).textContent = t; }); }
 }).catch(() => {});
+</script>
+<script>
+// 押したらすぐ反応する（LINEの申込画面が開くまで数秒かかるため）
+document.addEventListener("click", e=>{
+  const a=e.target.closest('a[href*="liff.line.me"]'); if(!a) return;
+  a.classList.add("opening");
+  let m=document.querySelector(".openmsg"); if(!m){ m=document.createElement("div"); m.className="openmsg"; m.setAttribute("role","status"); document.body.append(m); }
+  m.textContent="LINEで申込画面を開いています。そのまま少しお待ちください…"; m.hidden=false;
+  setTimeout(()=>{ a.classList.remove("opening"); m.hidden=true; }, 8000);
+});
 </script>
 </body>
 </html>

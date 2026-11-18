@@ -196,6 +196,8 @@ button{font:inherit;color:inherit}
 .foot nav a:hover{color:var(--blue);text-decoration:underline}
 .foot small{font-size:11px;color:var(--muted);letter-spacing:.04em}
 @media (max-width:380px){ .ecard{grid-template-columns:92px 1fr} .ecard img{width:92px;height:72px} .slot{grid-template-columns:48px 1fr;} .slot .go{grid-column:1 / -1} }
+/* 申込の準備中（どの画面でも見えるように、下に固定） */
+.wait{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:50;max-width:480px;margin:0 auto;background:var(--ink);color:var(--bg);border-radius:14px;padding:12px 16px;font-size:14px;font-weight:700;text-align:center;box-shadow:0 10px 30px -10px rgba(0,0,0,.4)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important} .reveal{opacity:1;transform:none}}
 </style>
 </head>
@@ -203,6 +205,7 @@ button{font:inherit;color:inherit}
 <div class="wrap">
   <div class="bar"><span class="brand"><img src="campus-add-logo.png" alt="Campus Add" width="300" height="98"></span></div>
   <div class="testbar" id="testbar" hidden></div>
+  <div class="wait" id="wait" hidden role="status">申込の準備をしています。少しお待ちください…</div>
 
   <!-- 1. イベント一覧 -->
   <main id="v-list">
@@ -302,6 +305,8 @@ function deviceUid(){
   return id;
 }
 let UID="", ID_TOKEN="", FRIEND=null, READY=false, PENDING=null;
+let readyDone=()=>{}; const READY_P=new Promise(ok=>{ readyDone=ok; });
+const cachedMe = () => { try{ const c=JSON.parse(localStorage.getItem("ca.event.me")||"null"); return c && Date.now()-c.at<60*864e5 ? c : null; }catch(x){ return null; } };
 const who = () => ID_TOKEN ? {idToken:ID_TOKEN} : {uid:UID||(UID=deviceUid())};
 function loadScript(src){ return new Promise((ok,ng)=>{ const s=document.createElement("script"); s.src=src; s.charset="utf-8"; s.onload=ok; s.onerror=ng; document.head.append(s); }); }
 async function startLine(){
@@ -386,7 +391,8 @@ function statusTags(e){
   const open=e.slots.filter(s=>!s.closed && s.left>0);
   if(mine(e).length) return [el("span",{className:"tag mine",textContent:"申込済み"})];
   if(!open.length) return [el("span",{className:e.slots.some(s=>!s.closed)?"tag full":"tag closed",textContent:e.slots.some(s=>!s.closed)?"満席":"受付終了"})];
-  if(open.every(s=>s.cap>0 && s.left<=Math.max(2,Math.ceil(s.cap*.2)))) return [el("span",{className:"tag few",textContent:"残りわずか"})];
+  // 定員が少ない（4名以下）イベントは、空いていても「残りわずか」に見えてしまうので出さない
+  if(open.every(s=>s.cap>=5 && s.left<=Math.max(2,Math.ceil(s.cap*.2)))) return [el("span",{className:"tag few",textContent:"残りわずか"})];
   return [];
 }
 
@@ -466,7 +472,7 @@ function field(id,label,{type="text",ph="",help="",mode=""}={}){
 }
 function renderProfile(){
   const box=$("#profile");
-  if(DATA.me.registered){ box.replaceChildren(el("div",{className:"q"},[el("span",{className:"ql",textContent:"申し込む人"}), el("span",{textContent:DATA.me.name+" さん"})])); return; }
+  if(DATA.me.registered){ box.replaceChildren(el("div",{className:"q"},[el("span",{className:"ql",textContent:"申し込む人"}), el("span",{textContent:DATA.me.name ? DATA.me.name+" さん" : "登録済みの情報で申し込みます"})])); return; }
   box.replaceChildren(
     el("p",{className:"sec",textContent:"はじめての方は、次の内容を入力してください（2回目からは入力不要です。来館予約と共通です）"}),
     field("p-name","お名前",{ph:"例）北海 太郎"}),
@@ -498,7 +504,19 @@ function renderQuestions(e){
 }
 function pickText(e,s){ return [el("span",{className:"k",textContent:e.kind}), el("span",{className:"d",textContent:e.title}), el("span",{className:"x",textContent:"日時："+whenText(s)}), el("span",{className:"x",textContent:"会場："+e.place})]; }
 function openForm(e,s){
-  if(!READY && !DEMO){ PENDING=[e,s]; const n=$("#notice"); n.textContent="準備しています。少しお待ちください…"; n.hidden=false; return; }
+  // 自分の情報がまだ届いていないときは、押したコマを覚えて待つ（LINEの仕組みでページが開き直されても、覚えたまま）
+  // ただし、前にこのスマホで登録済みと分かっている人は待たせない（フォームを先に開き、送る直前にLINEの確認を待つ）
+  if(!READY && !DEMO){
+    const cm=cachedMe();
+    if(!(cm && cm.registered)){
+      PENDING=[e,s]; $("#wait").textContent="申込の準備をしています。少しお待ちください…"; $("#wait").hidden=false;
+      try{ sessionStorage.setItem("ca.event.pending", JSON.stringify({id:e.id,key:s.key,at:Date.now()})); }catch(x){}
+      return;
+    }
+    DATA.me={...DATA.me, registered:true, grad:cm.grad||"", name:DATA.me.name||""};
+  }
+  $("#wait").hidden=true;
+  try{ sessionStorage.removeItem("ca.event.pending"); }catch(x){}
   EV=e; SLOT=s;
   $("#fPick").replaceChildren(...pickText(e,s));
   renderProfile(); renderQuestions(e);
@@ -538,6 +556,14 @@ $("#fForm").addEventListener("submit", async ev=>{
   if(!pr.ok || !an.ok || !share || !agreed){ const bad=document.querySelector("#fForm .q.bad"); if(bad) bad.scrollIntoView({behavior:"smooth",block:"center"}); return; }
   const btn=$("#fSend"), err=$("#fErr"); sending=true; btn.disabled=true; btn.textContent="申し込んでいます…"; err.hidden=true;
   try{
+    // フォームを先に開いていたときは、LINEの確認が終わるのを待ってから送る
+    if(!READY && !DEMO){
+      btn.textContent="準備しています…";
+      await Promise.race([READY_P, new Promise(ok=>setTimeout(ok,25000))]);
+      if(!READY) throw new Error("LINEでの確認ができませんでした。ページを開き直して、もう一度お試しください。");
+      btn.textContent="申し込んでいます…";
+      if(!DATA.me.registered){ renderProfile(); throw new Error("はじめての方は、お名前などの入力が必要です。上の欄に入力してから、もう一度押してください。"); }
+    }
     const r=await API.post({action:"apply",...who(),eventId:EV.id,slot:SLOT.key,answers:an.v,consent:EV.share?true:undefined,memo:$("#memo").value,profile:pr.profile});
     if(!r.ok){
       if(r.needProfile){ DATA.me.registered=false; renderProfile(); }
@@ -583,19 +609,25 @@ function renderMine(){
 function load(){
   return API.post({action:"init",...who()}).then(r=>{
     if(!r.ok) throw new Error(r.error);
-    fixImgs(r.events); DATA=r; READY=true;
+    fixImgs(r.events); DATA=r; READY=true; readyDone();
+    // 次に開いたとき待たせないよう、登録済みかどうかと卒年だけをこのスマホに覚えておく（名前などは覚えない）
+    try{ localStorage.setItem("ca.event.me", JSON.stringify({registered:!!r.me.registered, grad:r.me.grad||"", at:Date.now()})); }catch(x){}
+    if(!$("#v-form").hidden) renderProfile(); // 先に開いていたフォームの「申し込む人」を本当の情報に
     const tb=$("#testbar");
     if(r.demo){ tb.textContent="お試しモード：仮のデータで動いています。申し込んでも実際には登録されません。"; tb.hidden=false; }
     else if(r.test){ tb.textContent="テスト版（スタッフの試し用）"; tb.hidden=false; }
     $("#notice").hidden=true;
     renderMe(); renderList();
     // 先に出していた詳しいページ・待たせていた申込フォームを、自分の情報入りで出し直す
-    if(PENDING){ const [pe,ps]=PENDING; PENDING=null; const e2=DATA.events.find(x=>x.id===pe.id); const s2=e2&&e2.slots.find(x=>x.key===ps.key); if(e2&&s2) openForm(e2,s2); }
+    if(!PENDING){ try{ const p=JSON.parse(sessionStorage.getItem("ca.event.pending")||"null"); if(p && Date.now()-p.at<5*60e3) PENDING=[{id:p.id},{key:p.key}]; }catch(x){} }
+    $("#wait").hidden=true;
+    if(PENDING){ const [pe,ps]=PENDING; PENDING=null; const e2=DATA.events.find(x=>x.id===pe.id); const s2=e2&&e2.slots.find(x=>x.key===ps.key); if(e2&&s2&&!s2.closed&&s2.left>0) openForm(e2,s2); else if(e2) openDetail(e2,false); }
     else if(EV && !$("#v-detail").hidden){ const e2=DATA.events.find(x=>x.id===EV.id); if(e2) openDetail(e2,false); }
     return r;
   }).catch(()=>{
     const n=$("#notice"); n.textContent="イベントを読み込めませんでした。電波の良いところで、ページを開き直してください。"; n.hidden=false;
-    $("#events").replaceChildren();
+    if(!DATA.events.length) $("#events").replaceChildren();
+    const w=$("#wait"); w.textContent="読み込めませんでした。電波の良いところで、ページを開き直してください。"; w.hidden=false; // どの画面にいても見えるように
   });
 }
 $("#toMine").onclick=()=>{ renderMine(); show("mine"); };
@@ -609,7 +641,11 @@ function showPublic(events){
   if(READY || !Array.isArray(events)) return;
   DATA={...DATA, events:fixImgs(events)}; renderList();
   const id=Q.get("e"), e=id && events.find(x=>x.id===id);
-  if(e && $("#v-form").hidden) openDetail(e,false);
+  if(!e || !$("#v-form").hidden) return;
+  // LPのコマのボタン（&slot=）から来た、このスマホで登録済みの人は、すぐフォームへ
+  const sk=Q.get("slot"), pick=sk && e.slots.find(x=>x.key===sk && !x.closed && x.left>0), cm=cachedMe();
+  if(pick && cm && cm.registered){ openForm(e,pick); return; }
+  openDetail(e,false);
 }
 if(!DEMO){
   try{ const c=JSON.parse(localStorage.getItem("ca.event.list")||"null"); if(c && Date.now()-c.at<3*864e5) showPublic(c.events); }catch(x){}
@@ -618,6 +654,7 @@ if(!DEMO){
 // ?e=イベントID でそのイベントのページを開く。&apply=1（LPの申込ボタンから）なら、申し込める日程が1つだけのときはそのままフォームへ
 startLine().then(go=>{ if(!go) return; return load().then(r=>{
   const id=Q.get("e"); if(!r || !id) return;
+  if(!$("#v-form").hidden) return; // フォームを先に開いている（入力中）ときは、そのまま
   const e=DATA.events.find(x=>x.id===id);
   if(!e){ const n=$("#notice"); n.textContent="このイベントの受付は終了しました。ほかのイベントをご覧ください。"; n.hidden=false; return; }
   const open=e.slots.filter(s=>!s.closed && s.left>0);
