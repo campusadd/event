@@ -64,6 +64,17 @@ button{font:inherit;color:inherit}
 
 /* 上の見出し：写真の上に白いカード */
 .hero{position:relative;padding:4px 0 0}
+/* 一番上：写真いっぱいに言葉をのせる */
+.hero2{position:relative;margin-top:4px;border-radius:24px;overflow:hidden;min-height:340px;display:grid;align-items:end;isolation:isolate;box-shadow:0 18px 40px -24px rgba(40,30,10,.55)}
+.hero2 .h2photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%;z-index:-2}
+.hero2::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(15,20,30,0) 12%,rgba(15,20,30,.6) 42%,rgba(15,20,30,.9) 100%)}
+.h2text{padding:22px 20px 22px;color:#fff;display:grid;gap:8px}
+.h2kick{margin:0;font-family:var(--f-num);font-size:12px;letter-spacing:.28em;color:var(--star);display:flex;align-items:center;gap:8px}
+.h2kick::before{content:"";width:12px;height:12px;background:var(--star);clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%)}
+.hero2 h1{margin:0;font-size:clamp(24px,7vw,32px);font-weight:700;line-height:1.45;letter-spacing:.06em;text-shadow:0 2px 12px rgba(0,0,0,.35)}
+.hero2 h1 span{background:linear-gradient(transparent 62%,rgba(242,183,5,.75) 62%);padding:0 2px}
+.h2lead{margin:0;font-size:13px;line-height:1.8;color:rgba(255,255,255,.88)}
+@media (min-width:640px){ .hero2{min-height:400px} .h2text{padding:30px 32px} }
 .hero-photo{position:relative}
 .hero-photo .photo{aspect-ratio:2/1;object-position:center 35%}
 .blob{position:absolute;border-radius:50%;pointer-events:none}
@@ -209,15 +220,12 @@ button{font:inherit;color:inherit}
 
   <!-- 1. イベント一覧 -->
   <main id="v-list">
-    <header class="hero">
-      <div class="hero-photo">
-        <img class="photo" src="photo-event.jpg" alt="Campus Addのイベントで、たくさんの学生が話を聞いている様子" width="1600" height="900">
-        <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
-      </div>
-      <div class="hero-card">
-        <p class="kicker">EVENT<span class="ja">／ イベント・講座</span></p>
-        <h1>Campus Addの<br>イベント・講座</h1>
-        <p class="lead">企業の方と話せるイベントや、就活の講座を開いています。<br>気になるものがあれば、LINEからそのまま申し込めます。</p>
+    <header class="hero2">
+      <img class="h2photo" src="photo-event.jpg" alt="Campus Addのイベントで、たくさんの学生が話を聞いている様子" width="1600" height="900">
+      <div class="h2text">
+        <p class="h2kick">EVENT &amp; SEMINAR</p>
+        <h1><span>Campus Add</span>オリジナル<br>講座・イベント</h1>
+        <p class="h2lead">企業の人事担当者や先輩と話せるイベントに、就活が前進する講座。<br>Campus Addでしか体験できない機会をそろえています。</p>
       </div>
     </header>
     <div class="me" id="me" hidden><span id="meText"></span><button class="linkbtn" type="button" id="toMine">申込の確認<span class="n" id="mineN" hidden></span></button></div>
