@@ -230,7 +230,7 @@ button{font:inherit;color:inherit}
     </header>
     <div class="me" id="me" hidden><span id="meText"></span><button class="linkbtn" type="button" id="toMine">申込の確認<span class="n" id="mineN" hidden></span></button></div>
     <div class="notice" id="notice" hidden></div>
-    <div class="step"><span class="bgword" aria-hidden="true">SCHEDULE</span><h2>これからのイベント</h2></div>
+    <div class="step"><span class="bgword" aria-hidden="true">SCHEDULE</span><h2>いま申し込める講座・イベント</h2></div>
     <div class="filters" id="filters" role="group" aria-label="種類で絞り込む"></div>
     <div class="events" id="events"><div class="loading">読み込んでいます…</div></div>
   </main>
@@ -653,6 +653,14 @@ function showPublic(events){
   // LPのコマのボタン（&slot=）から来た、このスマホで登録済みの人は、すぐフォームへ
   const sk=Q.get("slot"), pick=sk && e.slots.find(x=>x.key===sk && !x.closed && x.left>0), cm=cachedMe();
   if(pick && cm && cm.registered){ openForm(e,pick); return; }
+  // 紹介ページの「LINEで申し込む」（&apply=1）から来て、申し込める日程が1つだけのとき
+  const open=e.slots.filter(x=>!x.closed && x.left>0);
+  if(Q.get("apply")==="1" && open.length===1){
+    if(cm && cm.registered){ openForm(e,open[0]); return; } // 登録済みのスマホは、すぐフォームへ
+    openDetail(e,false); // はじめての人は、準備ができたら自動でフォームに切り替わることを知らせておく
+    const w=$("#wait"); w.textContent="申込画面を準備しています。このまま少しお待ちください…"; w.hidden=false;
+    return;
+  }
   openDetail(e,false);
 }
 if(!DEMO){
