@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="description" content="IT企業の選考を突破した現役SEの先輩に、就活のリアルを直接聞けるトーク会（Campus Add）の案内と参加申込">
+<title>現役SEトーク会</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=M+PLUS+2:wght@400;500;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Campus Add の青（ITらしい落ち着いた色）＋ ロゴの黄色。1列で、上から「どんな会か → 聞ける話 → 日程 → 概要 → 申込」 */
+:root{
+  --bg:#f5f8fc; --surface:#ffffff; --soft:#e7eef8; --ink:#26303d; --muted:#5f6b7a; --line:#d6e0ee;
+  --accent:#1f5fae; --accent-ink:#ffffff; --mark:#f2b705; --mark-soft:#fff3c7; --mark-ink:#7a5600;
+  --hero:linear-gradient(160deg,#dde9f8 0%,#f3f7fd 55%,#fff8dc 100%);
+  --wait:#5f7f9f; --wait-soft:#e3ebf3; --danger:#c62828; --danger-soft:#fdeaea; --line-green:#06c755;
+  --f-body:"M PLUS 2","Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif;
+  --f-num:"Outfit","M PLUS 2",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f141c; --surface:#161e2a; --soft:#1e2a3a; --ink:#edf2f8; --muted:#a2afc0; --line:#2a3647;
+  --accent:#7fb0f0; --accent-ink:#0b1626; --mark:#f5c430; --mark-soft:#3a3016; --mark-ink:#f8dc8a;
+  --hero:linear-gradient(160deg,#172a44 0%,#161e2a 60%,#2a2814 100%);
+  --wait:#9fbbd8; --wait-soft:#1e2c3d; --danger:#ff8a80; --danger-soft:#3a1c1c; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0f141c; --surface:#161e2a; --soft:#1e2a3a; --ink:#edf2f8; --muted:#a2afc0; --line:#2a3647;
+  --accent:#7fb0f0; --accent-ink:#0b1626; --mark:#f5c430; --mark-soft:#3a3016; --mark-ink:#f8dc8a;
+  --hero:linear-gradient(160deg,#172a44 0%,#161e2a 60%,#2a2814 100%);
+  --wait:#9fbbd8; --wait-soft:#1e2c3d; --danger:#ff8a80; --danger-soft:#3a1c1c; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--bg);scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;font-weight:500;line-height:1.75;letter-spacing:.02em;-webkit-font-smoothing:antialiased}
+.wrap{max-width:720px;margin:0 auto;padding-inline:16px;padding-block:20px 64px}
+h1,h2,h3{text-wrap:balance;margin:0;line-height:1.3}
+a{color:var(--accent)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--mark);outline-offset:2px;border-radius:6px}
+.eyebrow{font-size:12px;letter-spacing:.12em;color:var(--muted);font-weight:700}
+
+.hero{display:grid;gap:14px;padding:28px 16px 24px;justify-items:center;text-align:center;background:var(--hero);border:1px solid var(--line);border-radius:20px}
+.brand{width:200px;height:34px;overflow:hidden;background:#fff;border-radius:8px;box-sizing:content-box;padding:8px 12px}
+.brand img{display:block;width:247px;height:81px;max-width:none;margin:-23px 0 0 -23px}
+.hero h1{font-weight:800;font-size:clamp(24px,6.6vw,36px);letter-spacing:.04em;line-height:1.4}
+.hero h1 em{font-style:normal;background:linear-gradient(transparent 62%,var(--mark-soft) 62%)}
+.hero .sub{font-weight:800;font-size:16px;color:var(--ink);letter-spacing:.06em}
+.hero h1 small{display:block;font-size:15px;letter-spacing:.12em;color:var(--accent);margin-bottom:8px}
+/* ロゴの黄色い星を見出しの飾りに */
+.hero h1 small::before{content:"";display:inline-block;width:.9em;height:.9em;margin-right:.45em;vertical-align:-.1em;background:var(--mark);
+  clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%)}
+.hero p{margin:0 auto;max-width:32em;color:var(--muted)}
+.points{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 0;padding:0;list-style:none;width:100%}
+.points li{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 8px;font-size:13px;font-weight:700;line-height:1.45}
+.points li b{display:block;font-family:var(--f-num);font-size:20px;color:var(--accent);line-height:1.2}
+.cta{display:flex;justify-content:center;align-items:center;gap:8px;width:100%;border:none;border-radius:12px;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:16px;padding:15px 18px;cursor:pointer;text-decoration:none}
+.cta:hover{filter:brightness(1.06)}
+.cta.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+.cta.line{background:var(--line-green);color:#fff}
+.cta[disabled]{opacity:.6;cursor:wait}
+.hero .cta{max-width:340px;margin-top:4px}
+
+.notice{margin-top:14px;background:var(--mark-soft);color:var(--mark-ink);border-radius:10px;padding:10px 14px;font-size:13px}
+section{margin-top:34px}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 12px}
+.sec-h h2{font-size:19px}
+.sec-h .count{font-family:var(--f-num);font-size:12px;color:var(--muted)}
+.topics{display:flex;flex-wrap:wrap;gap:8px}
+.topics span{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:14px;font-weight:700}
+.lead{margin:10px 0 0;font-size:14px;color:var(--muted)}
+.feature{background:var(--surface);border:2px solid var(--accent);border-radius:16px;padding:18px 18px 16px;display:grid;gap:8px;position:relative}
+.feature .tag{justify-self:start;background:var(--mark);color:#3a2a00;font-weight:800;font-size:12px;letter-spacing:.08em;border-radius:999px;padding:2px 12px}
+.feature h3{font-size:18px;line-height:1.5}
+.feature p{margin:0;font-size:14px}
+.talks{margin:12px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.talks li{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14px;font-weight:700;line-height:1.5}
+.flow{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.flow li{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px}
+.flow li b{font-family:var(--f-num);color:var(--accent);font-size:13px;letter-spacing:.06em;text-align:center;border-right:1px dashed var(--line);padding-right:8px}
+.flow li span strong{display:block;font-size:15px}
+.safe{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.safe li{display:flex;gap:10px;align-items:flex-start;background:var(--soft);border-radius:12px;padding:10px 14px;font-size:14px;font-weight:700}
+.safe li::before{content:"✓";flex:none;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:13px}
+@media (max-width:480px){ .talks{grid-template-columns:1fr} }
+
+/* 日程：日付の札＋その日の3コマ */
+.days{display:grid;gap:10px}
+.day{display:grid;grid-template-columns:76px 1fr;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.day .date{display:grid;place-content:center;text-align:center;background:var(--soft);border-right:1px dashed var(--line);padding:10px 4px;font-family:var(--f-num)}
+.date .m{font-size:11px;color:var(--muted);letter-spacing:.06em}
+.date .d{font-variant-numeric:tabular-nums;font-size:26px;font-weight:600;line-height:1.1}
+.date .w{font-size:11px;color:var(--muted);font-family:var(--f-body);font-weight:700}
+.slots{display:grid;gap:6px;padding:10px 12px}
+.slot{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--bg);text-align:left;width:100%;cursor:pointer}
+.slot .t{font-family:var(--f-num);font-variant-numeric:tabular-nums;font-size:16px;font-weight:600}
+.slot:hover:not([disabled]){border-color:var(--accent)}
+.slot[disabled]{cursor:default;opacity:.75}
+.slot[disabled] .t{color:var(--muted)}
+.pill{font-size:11px;font-weight:700;border-radius:999px;padding:2px 10px;letter-spacing:.03em;white-space:nowrap}
+.pill.ok{background:var(--mark-soft);color:var(--mark-ink)}
+.pill.full{background:var(--soft);color:var(--muted)}
+.pill.soldout{background:var(--danger);color:#fff}
+.slot.soldout{opacity:1;border-color:var(--danger-soft);background:var(--danger-soft)}
+.choices label.soldout input:disabled+span{color:var(--danger);background:var(--danger-soft);border-color:var(--danger-soft);text-decoration:none}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:12px;padding:18px 16px;color:var(--muted);font-size:14px}
+
+.facts{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;margin:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;font-size:14px}
+.facts dt{color:var(--muted);font-size:12px;font-weight:700;padding-top:2px}
+.facts dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.facts small{color:var(--muted);font-size:12px}
+/* 注意書きは押せるように見えないよう、枠のない箇条書きにする */
+.rules{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.rules li{position:relative;padding-left:22px;font-size:14px}
+.rules li::before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:50%;background:var(--mark)}
+.target{background:var(--accent);color:var(--accent-ink);font-weight:800;font-size:15px;letter-spacing:.08em;border-radius:999px;padding:4px 18px}
+
+.office{margin:0;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;text-align:left}
+.office img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
+.office figcaption{padding:14px 16px;display:grid;gap:4px;font-size:14px;color:var(--muted)}
+.office figcaption b{font-size:17px;color:var(--ink)}
+.office .map{justify-self:start;margin-top:6px;font-size:13px;font-weight:700;color:var(--accent);border:1.5px solid var(--accent);border-radius:999px;padding:4px 14px;text-decoration:none}
+
+/* 申込フォーム */
+.qform{display:grid;gap:14px}
+.q{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:14px 16px;margin:0;min-width:0;display:grid;gap:10px}
+.q.bad{border-color:var(--danger)}
+.qt{font-weight:700;font-size:14px;white-space:pre-line;overflow-wrap:anywhere}
+.req,.opt{font-size:10px;font-weight:700;border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:2px;white-space:nowrap}
+.req{background:var(--mark-soft);color:var(--mark-ink)}
+.opt{background:var(--soft);color:var(--muted)}
+.qh{font-size:12px;color:var(--muted);margin:-4px 0 0;white-space:pre-line;overflow-wrap:anywhere}
+.qh.box{margin:0;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;max-height:200px;overflow:auto}
+.qe{color:var(--danger);font-size:12px;font-weight:700;margin:0}
+.choices{display:flex;flex-wrap:wrap;gap:8px}
+.choices.stack{flex-direction:column}
+.choices label{position:relative;cursor:pointer}
+.choices.stack label{width:100%}
+.choices input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.choices span{display:block;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:14px;background:var(--bg)}
+.choices input:checked+span{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.choices input:focus-visible+span{outline:3px solid var(--mark);outline-offset:2px}
+.choices input:disabled+span{color:var(--muted);background:var(--soft);cursor:default;text-decoration:line-through}
+.choices input:disabled{cursor:default}
+.sgroup{display:grid;gap:6px}
+.sgroup b{font-size:13px}
+.qform input[type="text"],.qform textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.qform textarea{min-height:110px;resize:vertical}
+.errbox{background:var(--surface);border:1.5px solid var(--danger);color:var(--danger);border-radius:12px;padding:12px 14px;font-size:13px;font-weight:700}
+.fallback{font-size:12px;color:var(--muted);text-align:center;margin:12px 0 0}
+.thanks{text-align:center;padding:24px 0;display:grid;gap:14px;justify-items:center}
+.thanks .big{font-weight:800;font-size:28px;color:var(--accent)}
+.thanks .picked{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 16px;font-weight:700}
+.thanks p{margin:0;color:var(--muted);font-size:14px}
+.thanks .cta{max-width:340px}
+footer{margin-top:40px;font-size:12px;color:var(--muted);text-align:center;display:grid;gap:4px}
+@media (max-width:480px){
+  .points li{font-size:12px;padding:8px 6px}
+  .day{grid-template-columns:64px 1fr}
+  .date .d{font-size:22px}
+  .slots{padding:8px 10px}
+}
+.applybox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px 18px;display:grid;gap:12px;justify-items:center;text-align:center}
+.applybox .st{margin:0;font-weight:800}
+.applybox .small{margin:0;font-size:13px;color:var(--muted)}
+.cta.big{max-width:360px;font-size:17px;padding:17px 18px}
+.cta.off{background:var(--soft);color:var(--muted);pointer-events:none}
+.day.one .slot{cursor:default}
+/* ---- ここから：トーク会の見た目 ---- */
+:root{--navy:#0f2747;--navy2:#173a66;--f-mono:"JetBrains Mono",ui-monospace,monospace}
+.hero{background:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px) 0 0/22px 22px,linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px) 0 0/22px 22px,linear-gradient(160deg,var(--navy) 0%,var(--navy2) 100%);
+  border:none;color:#fff;text-align:left;justify-items:start;padding:26px 20px 24px;border-radius:22px;position:relative;overflow:hidden}
+.hero::after{content:"</>";position:absolute;right:-6px;top:6px;font-family:var(--f-mono);font-weight:700;font-size:96px;color:rgba(255,255,255,.06);pointer-events:none}
+.hero .eyebrow{font-family:var(--f-mono);color:#ffd84d;letter-spacing:.04em;font-size:12px}
+.hero .eyebrow::before{content:"> "}
+.hero h1{color:#fff}
+.hero h1 small{color:#9cc3f5;font-family:var(--f-mono);letter-spacing:.06em}
+.hero h1 small::before{content:"// ";clip-path:none;background:none;width:auto;height:auto;margin:0;vertical-align:0}
+.hero h1 em{background:linear-gradient(transparent 64%,rgba(242,183,5,.55) 64%)}
+.hero .sub{color:#ffd84d}
+.hero p{color:#d6e2f2;margin:0}
+.hero .target{background:#ffd84d;color:var(--navy)}
+.hero .points li{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);color:#d6e2f2}
+.hero .points li b{color:#fff}
+.hero .cta{background:#ffd84d;color:var(--navy);justify-self:stretch;max-width:none}
+.hero .brand{border-radius:6px}
+/* 小見出しの前に番号（コード風） */
+main{counter-reset:sec}
+section>.sec-h h2{counter-increment:sec}
+section>.sec-h h2::before{content:counter(sec,decimal-leading-zero);font-family:var(--f-mono);font-size:13px;color:var(--accent);margin-right:10px;vertical-align:2px;border:1.5px solid var(--accent);border-radius:6px;padding:0 6px}
+/* 目玉の話：吹き出し */
+.feature{border:none;background:var(--navy);color:#fff;border-radius:18px}
+.feature h3{color:#fff;font-size:20px}
+.feature h3::before{content:"Q.";font-family:var(--f-mono);color:#ffd84d;margin-right:8px}
+.feature p{color:#d6e2f2}
+.talks li{border-left:4px solid var(--accent)}
+.talks li::before{content:"#";font-family:var(--f-mono);color:var(--accent);margin-right:6px}
+.flow li b{font-family:var(--f-mono)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <main id="v-home">
+    <header class="hero">
+      <div class="eyebrow">ITに興味あってもなくてもOK！</div>
+      <div class="brand"><img src="campus-add-logo.png" alt="Campus Add" width="300" height="98"></div>
+      <h1><small>現役SEトーク会</small>IT企業の選考を突破した先輩が話す、<em>「ここだけの」就活のリアル</em></h1>
+      <div class="sub">選考なし・人事なし。先輩の「本音」を聞くだけの1時間</div>
+      <div class="target">28卒以降 対象</div>
+      <p>Campus Addを使っていた先輩で、いまはIT企業（株式会社クレスコ）で働く現役のSEが来てくれます。<br>文系からSEになった先輩に、就活のことも仕事のことも、気になることを聞いてみませんか。</p>
+      <ul class="points">
+        <li><b>12/3</b>木曜 16:30〜</li>
+        <li><b>8名</b>先着順</li>
+        <li><b>選考外</b>人事は来ません</li>
+      </ul>
+      <a class="cta" id="go1" href="#apply">LINEで申し込む</a>
+    </header>
+    <div class="notice" id="notice" hidden></div>
+
+    <section>
+      <div class="sec-h"><h2>今回いちばん聞いてほしい話</h2></div>
+      <div class="feature">
+        <span class="tag">文系の人ほど聞いてほしい</span>
+        <h3>「なぜIT業界なの？」に、どう答える？</h3>
+        <p>IT業界を選ぶ理由って、正直「働きやすそう」「待遇がよさそう」が本音だったりしますよね。でも選考では、志望する理由や「ITで実現したいこと」をどう伝えるかで、合否が大きく変わります。</p>
+        <p>文系からIT企業の選考を突破した先輩が、自分はどう考えて、どう伝えたのかを話してくれます。</p>
+      </div>
+      <ul class="talks">
+        <li>先輩の就活体験談</li>
+        <li>IT企業の選考で見られていたこと</li>
+        <li>SEって、実際なにをする仕事？</li>
+        <li>文系からSEになってどうだった？</li>
+        <li>入社してからの失敗談</li>
+        <li>平日と土日の過ごし方</li>
+      </ul>
+      <p class="lead">IT業界を志望していなくても大丈夫です。業界がまだ決まっていない人や、先輩の就活のやり方を知りたい人にも役立つ話です。</p>
+    </section>
+
+    <section>
+      <div class="sec-h"><h2>当日の流れ</h2></div>
+      <ol class="flow">
+        <li><b>前半</b><span><strong>先輩の話</strong>就活のこと、仕事のこと、失敗談などを先輩から話してくれます。</span></li>
+        <li><b>後半</b><span><strong>質問タイム</strong>聞いてみたいことを自由に質問できます。聞くだけの参加でもOKです。</span></li>
+      </ol>
+    </section>
+
+    <section>
+      <div class="sec-h"><h2>安心して参加してください</h2></div>
+      <ul class="safe">
+        <li>採用や選考とは関係ありません</li>
+        <li>人事・採用担当の方は来ません。話すのは現役のSEの先輩です</li>
+        <li>参加者の情報を企業に渡すことはありません</li>
+        <li>服装は私服でOK（先輩もカジュアルな服装で来ます）</li>
+      </ul>
+    </section>
+
+    <section id="schedule">
+      <div class="sec-h"><h2>日程</h2></div>
+      <div class="day one">
+        <div class="date"><div class="m">12月</div><div class="d">3</div><div class="w">木曜</div></div>
+        <div class="slots"><div class="slot"><span class="t">16:30〜17:30</span><span class="pill ok" id="st1">受付中</span></div></div>
+      </div>
+      <p class="lead">申込の締切は12月1日（火）23:59です。席は先着順で、定員になりしだい締め切ります。</p>
+    </section>
+
+    <section>
+      <div class="sec-h"><h2>開催概要</h2></div>
+      <dl class="facts">
+        <dt>日時</dt><dd>2026年12月3日（木）16:30〜17:30<br><small>16:15から入室できます</small></dd>
+        <dt>対象</dt><dd>28卒以降の方（学年・文系理系は問いません）</dd>
+        <dt>定員</dt><dd>8名（先着順）</dd>
+        <dt>参加費</dt><dd>無料</dd>
+        <dt>協力</dt><dd>株式会社クレスコ</dd>
+        <dt>会場</dt><dd>Campus Add<br><small>札幌市中央区南1条東3丁目10-13 アイパスビル3F<br>地下鉄東西線「バスセンター前」駅 6番出口から徒歩2分</small></dd>
+        <dt>服装</dt><dd>私服でOK<br><small>授業や就活イベントの帰りに、そのままの服装で来ても大丈夫です</small></dd>
+        <dt>持ち物</dt><dd>筆記用具・メモ帳</dd>
+        <dt>締切</dt><dd>2026年12月1日（火）23:59</dd>
+      </dl>
+    </section>
+
+    <section>
+      <div class="sec-h"><h2>申し込む前に</h2></div>
+      <ul class="rules">
+        <li>16:15から入室できます。開始時刻に遅れる場合は、Campus Addの公式LINEで事前にご連絡ください。</li>
+        <li>過去にこのトーク会に参加したことがある方も、申し込めます。</li>
+        <li>キャンセルや日程の変更は、Campus Addの公式LINEでご連絡ください。先輩が準備をして来てくれるので、当日のキャンセルはできるだけ避けてください。</li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="sec-h"><h2>トーク会の前後も Campus Add へ</h2></div>
+      <figure class="office">
+        <img src="campus-add-room.jpg" alt="Campus Add の室内。本棚の前にテーブル席とカラフルなスツールが並ぶ明るいスペース" width="1600" height="1067" loading="lazy">
+        <figcaption><b>就活の相談も、作業の場所としても使えます</b><span>トーク会の前後で、Campus Addスタッフに就活の相談をしたり、空いている座席でES作成や企業研究などを進めたりできます。利用したい方は、申込フォームで選んでください。</span>
+          <a class="map" href="https://www.google.com/maps/search/?api=1&amp;query=%E6%9C%AD%E5%B9%8C%E5%B8%82%E4%B8%AD%E5%A4%AE%E5%8C%BA%E5%8D%971%E6%9D%A1%E6%9D%B13%E4%B8%81%E7%9B%AE10-13" target="_blank" rel="noopener">地図を開く</a></figcaption>
+      </figure>
+    </section>
+
+    <section id="apply">
+      <div class="sec-h"><h2>申し込む</h2></div>
+      <div class="applybox">
+        <p class="st" id="st2">申込の締切：12月1日（火）23:59</p>
+        <a class="cta line big" id="go2" href="#">LINEで申し込む</a>
+        <p class="small">Campus Addの公式LINEで申込画面が開きます。<br>来館予約で登録したことがある方は、名前などの入力はいりません。初めての方も、その場で登録できます（1分ほど）。</p>
+      </div>
+    </section>
+
+    <footer><span>内容は変更になる場合があります。最新情報はこのページで確認してください。</span><span>運営：Campus Add（株式会社エス・イー・ジャパン）</span></footer>
+  </main>
+</div>
+
+<script>
+// イベント予約とのつなぎ（イベントIDを変えれば、ほかの回・ほかの企業にも使い回せる）
+const EVENT_ID = "cresco1203";
+const API = "https://script.google.com/macros/s/AKfycbwfGR-XHbmPhWXb7qn69VTMTOnCXIw9aVLmc-3wRB4qzYQ-SifYMEBJWX186_W_6gM8_w/exec";
+const APPLY = "https://liff.line.me/2012298807-AJLjQIk8?e=" + EVENT_ID + "&apply=1";
+const $ = q => document.querySelector(q);
+["#go1", "#go2"].forEach(q => { $(q).href = APPLY; });
+// 残りの席を表示（読めなくても、申込ボタンはそのまま使える）
+fetch(API).then(r => r.json()).then(d => {
+  const ev = (d.events || []).find(e => e.id === EVENT_ID); if (!ev || !ev.slots || !ev.slots.length) return;
+  const sl = ev.slots[0], p = $("#st1");
+  let t = "受付中", cls = "ok";
+  if (sl.closed) { t = "受付終了"; cls = "full"; }
+  else if (sl.cap && sl.left <= 0) { t = "満席"; cls = "soldout"; }
+  else if (sl.cap) t = "残り" + sl.left + "席";
+  p.textContent = t; p.className = "pill " + cls;
+  if (cls !== "ok") { $("#st2").textContent = t === "満席" ? "定員に達したため、申込を締め切りました" : "申込の受付は終了しました"; ["#go1", "#go2"].forEach(q => { $(q).classList.add("off"); $(q).textContent = t; }); }
+}).catch(() => {});
+</script>
+</body>
+</html>
