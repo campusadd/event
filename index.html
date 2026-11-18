@@ -66,11 +66,11 @@ button{font:inherit;color:inherit}
 .hero{position:relative;padding:4px 0 0}
 /* 一番上：写真いっぱいに言葉をのせる */
 .hero2{position:relative;margin-top:4px;border-radius:24px;overflow:hidden;min-height:340px;display:grid;align-items:end;isolation:isolate;box-shadow:0 18px 40px -24px rgba(40,30,10,.55)}
-.hero2 .h2photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%;z-index:-2}
+.hero2 .h2photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:84% 45%;z-index:-2}
 .hero2::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(15,20,30,0) 12%,rgba(15,20,30,.6) 42%,rgba(15,20,30,.9) 100%)}
 .h2text{padding:22px 20px 22px;color:#fff;display:grid;gap:8px}
-.h2kick{margin:0;font-family:var(--f-num);font-size:12px;letter-spacing:.28em;color:var(--star);display:flex;align-items:center;gap:8px}
-.h2kick::before{content:"";width:12px;height:12px;background:var(--star);clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%)}
+.h2kick{margin:0;justify-self:start;font-family:var(--f-num);font-size:12px;font-weight:700;letter-spacing:.2em;color:#2a2205;background:var(--star);border-radius:999px;padding:5px 14px 4px 12px;display:inline-flex;align-items:center;gap:7px;box-shadow:0 4px 14px -6px rgba(0,0,0,.5)}
+.h2kick::before{content:"";width:11px;height:11px;background:#2a2205;clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%)}
 .hero2 h1{margin:0;font-size:clamp(24px,7vw,32px);font-weight:700;line-height:1.45;letter-spacing:.06em;text-shadow:0 2px 12px rgba(0,0,0,.35)}
 .hero2 h1 span{background:linear-gradient(transparent 62%,rgba(242,183,5,.75) 62%);padding:0 2px}
 .h2lead{margin:0;font-size:13px;line-height:1.8;color:rgba(255,255,255,.88)}
