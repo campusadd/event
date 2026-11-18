@@ -285,7 +285,8 @@ const GRADS = ["28卒","29卒","30卒","その他"];
 const PHOTO = "photo-welcome.jpg";
 // 個人情報の取り扱い（初回登録のときだけ。来館予約と同じ登録を共有する）
 const PRIVACY = "株式会社エス・イー・ジャパン【Campus Add】（以下、当社）は、ご入力いただいた個人情報を次の目的で利用します。\n1. 来館予約・イベントの申込の受付と、それに関するご連絡\n2. 相談内容・参加の記録と、スタッフ間での引き継ぎ（より良いサポートのため）\n3. 当社（Campus Add）からの、就職活動に関する講座・イベント・個別相談のご案内\n\nなお、このページではLINEログインを利用し、LINEのユーザー識別子を申込情報とひもづけて管理します。\n\n法令に基づく場合を除き、ご本人の同意なく第三者へ提供することはありません。協賛企業などへ情報を提供する場合は、その都度、提供する内容と提供先をお知らせし、ご本人の同意をいただいたうえで行います。\n\n【お問い合わせ窓口】株式会社エス・イー・ジャパン\nTEL：011-577-1396　MAIL：info@sejapan.jp\nプライバシーポリシー：https://www.campus-add.com/privacy-policy";
-const Q = new URLSearchParams(location.search);
+// LINEから開くと、最初は ?liff.state=%3Fe%3D...%26apply%3D1 の形で届くので、中身もほどいて読む
+const Q = (()=>{ const q=new URLSearchParams(location.search); const st=q.get("liff.state")||""; const i=st.indexOf("?"); if(i>=0) new URLSearchParams(st.slice(i+1)).forEach((v,k)=>{ if(!q.has(k)) q.set(k,v); }); return q; })();
 
 // ---- 利用者の見分け方（来館予約と同じ。LINEのIDトークンを受付係に渡して確かめてもらう） ----
 function deviceUid(){
