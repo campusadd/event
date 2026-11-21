@@ -210,6 +210,18 @@ button{font:inherit;color:inherit}
 /* 申込の準備中（どの画面でも見えるように、下に固定） */
 .wait{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:50;max-width:480px;margin:0 auto;background:var(--ink);color:var(--bg);border-radius:14px;padding:12px 16px;font-size:14px;font-weight:700;text-align:center;box-shadow:0 10px 30px -10px rgba(0,0,0,.4)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important} .reveal{opacity:1;transform:none}}
+/* 一覧のまとまり（Campus Addで開催／スポンサー企業のイベント） */
+.grp{display:grid;gap:2px;margin:14px 0 2px;padding-left:12px;border-left:4px solid var(--blue)}
+.grp:first-child{margin-top:0}
+.grp b{font-size:16px;font-weight:700;letter-spacing:.04em}
+.grp span{font-size:12px;color:var(--muted)}
+.grp ~ .grp{border-left-color:var(--star)}
+.tag.spon{background:var(--mark-soft);color:var(--mark-ink)}
+/* スポンサー企業のイベント：企業のページで申し込む */
+.applyout{display:grid;gap:8px;justify-items:center;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 16px}
+.applyout .cta{width:100%;max-width:360px;text-decoration:none}
+.applyout p{margin:0;font-size:13px;color:var(--muted);line-height:1.7}
+.applyout .until{font-size:12px}
 /* 来館予約 ⇔ イベント予約 の行き来 */
 .xlink{display:grid;grid-template-columns:52px 1fr 20px;align-items:center;gap:14px;margin:26px 0 0;padding:16px 16px;background:var(--surface);border:1.5px solid var(--line);border-radius:18px;text-decoration:none;color:inherit;transition:transform .2s ease, box-shadow .2s ease}
 .xlink:hover{transform:translateY(-2px);box-shadow:0 10px 24px -16px rgba(60,40,10,.4)}
@@ -411,6 +423,7 @@ function show(view){
 }
 // 状態の札（申込済み・残りわずか・満席・受付終了）
 function statusTags(e){
+  if(e.apply) return []; // スポンサー企業のイベント（申込は企業）は、空き状況をCampus Addでは持たない
   const open=e.slots.filter(s=>!s.closed && s.left>0);
   if(mine(e).length) return [el("span",{className:"tag mine",textContent:"申込済み"})];
   if(!open.length) return [el("span",{className:e.slots.some(s=>!s.closed)?"tag full":"tag closed",textContent:e.slots.some(s=>!s.closed)?"満席":"受付終了"})];
@@ -430,15 +443,15 @@ function renderList(){
   const box=$("#events");
   const list=DATA.events.filter(e=>FILTER==="すべて"||e.kind===FILTER);
   if(!list.length){ box.replaceChildren(el("div",{className:"empty",textContent:"いま申し込めるイベントはありません。決まったら、LINEでお知らせします。"})); return; }
-  box.replaceChildren(...list.map(e=>{
+  const card=e=>{
     const first=e.slots[0], more=e.slots.length-1;
     const kids=[
       el("img",{src:photoOf(e),className:photoCls(e),alt:"",loading:"lazy",width:236,height:176}),
       el("span",{className:"tx"},[
-        el("span",{className:"k"},[el("span",{className:"tag kind",textContent:e.kind}), e.target?el("span",{className:"tag target",textContent:e.target}):null, ...statusTags(e), e.external?el("span",{className:"tag target ext",textContent:"詳しいページ"}):null]),
+        el("span",{className:"k"},[el("span",{className:"tag kind",textContent:e.kind}), e.target?el("span",{className:"tag target",textContent:e.target}):null, ...statusTags(e), e.external?el("span",{className:"tag target ext",textContent:"詳しいページ"}):null, e.apply?el("span",{className:"tag spon",textContent:"申込は企業のページ"}):null]),
         e.company ? el("span",{className:"co"},[e.logo && e.photo ? el("img",{src:e.logo,alt:""}) : null, ...coText(e)].filter(Boolean)) : null,
         el("b",{textContent:e.title}),
-        el("span",{className:"when",textContent:whenText(first)+(more>0?` ほか${more}回`:"")}),
+        el("span",{className:"when",textContent:first ? whenText(first)+(more>0?` ほか${more}回`:"") : "日程は申込ページで確認"}),
         e.sub?el("small",{textContent:e.sub}):null
       ])
     ];
@@ -447,7 +460,13 @@ function renderList(){
     if(!targetOk(e)) card.classList.add("out");
     if(!e.external) card.onclick=()=>openDetail(e);
     return card;
-  }));
+  };
+  // 「Campus Addで開催」と「スポンサー企業のイベント（申込は企業）」に分ける。片方しかなければ見出しは出さない
+  const own=list.filter(e=>!e.apply), spon=list.filter(e=>e.apply);
+  const grp=(t,s,arr)=>[el("div",{className:"grp"},[el("b",{textContent:t}),el("span",{textContent:s})]), ...arr.map(card)];
+  box.replaceChildren(...(own.length && spon.length
+    ? [...grp("Campus Addで開催","Campus Addの会場で開く、ここだけの講座・イベント",own), ...grp("スポンサー企業のイベント","Campus Addのスポンサー企業が開く説明会など。申込は企業のページから",spon)]
+    : list.map(card)));
   reveal(box);
 }
 function renderMe(){
@@ -462,7 +481,13 @@ function openDetail(e, push=true){
   EV=e;
   if(push) try{ history.replaceState(null,"","?e="+encodeURIComponent(e.id)+(DEMO&&/demo=1/.test(location.search)?"&demo=1":"")); }catch(x){}
   const already=mine(e), canTarget=targetOk(e);
-  const rows=[["日時",e.slots.map(whenText).join("\n")],["会場",e.place],e.target?["対象",e.target]:null,e.company?["企業",(e.by?e.by+" ":"")+e.company]:null].filter(Boolean);
+  const rows=[["日時",e.slots.length?e.slots.map(whenText).join("\n"):"申込ページで確認できます"],["会場",e.place||(e.apply?"申込ページで確認できます":"")],e.target?["対象",e.target]:null,e.company?["企業",(e.by?e.by+" ":"")+e.company]:null].filter(r=>r&&r[1]);
+  // スポンサー企業のイベント：申込は企業のページ（Campus Addでは受けない）
+  const applyBox = e.apply ? el("div",{className:"applyout"},[
+    el("a",{className:"cta",href:e.apply,target:"_blank",rel:"noopener",textContent:"企業のページで申し込む"}),
+    el("p",{textContent:"申込は企業のページで受け付けています。はじめての方は、マイページの登録が必要です（5分ほど）。"}),
+    e.until ? el("p",{className:"until",textContent:"このページへの掲載は "+e.until+" までです"}) : null
+  ].filter(Boolean)) : null;
   $("#detail").replaceChildren(...[
     el("img",{className:"photo "+photoCls(e),src:photoOf(e),alt:"",width:1200,height:675}),
     el("p",{className:"kicker",textContent:e.kind}),
@@ -471,9 +496,10 @@ function openDetail(e, push=true){
     el("dl",{className:"facts"},rows.flatMap(([k,v])=>[el("dt",{textContent:k}),el("dd",{textContent:v,style:"white-space:pre-line"})])),
     e.body?el("div",{className:"body"},[el("h3",{textContent:"内容"}),e.body]):null,
     e.bring?el("div",{className:"body"},[el("h3",{textContent:"持ち物・注意"}),e.bring]):null,
-    el("div",{className:"step",style:"margin:14px 0 0"},[el("span",{className:"bgword",ariaHidden:"true",textContent:"ENTRY"}),el("h2",{textContent:"日程を選んで申し込む"})]),
+    el("div",{className:"step",style:"margin:14px 0 0"},[el("span",{className:"bgword",ariaHidden:"true",textContent:"ENTRY"}),el("h2",{textContent:e.apply?"申し込む":"日程を選んで申し込む"})]),
     !canTarget?el("p",{className:"notice",textContent:`このイベントは${e.target}の方が対象です。`}):null,
-    el("div",{className:"slots"},e.slots.map(s=>{
+    applyBox,
+    e.apply ? null : el("div",{className:"slots"},e.slots.map(s=>{
       const [,m,d]=s.date.split("/").map(Number);
       const isMine=already.some(a=>a.date+"|"+a.start===s.key);
       const label=isMine?"申込済み":s.closed?"受付終了":s.left<1?"満席":"申し込む";
@@ -483,7 +509,7 @@ function openDetail(e, push=true){
       const note=s.closed?"締切を過ぎました":s.cap>0?(s.left<1?"定員に達しました":`残り${s.left}席`)+"・締切 "+s.deadline:"締切 "+s.deadline;
       return el("div",{className:"slot"},[el("span",{className:"dnum"},[el("span",{className:"m",textContent:m+"月"}),el("span",{className:"d",textContent:d}),el("span",{className:"w",textContent:s.w})]), el("span",{},[el("span",{className:"t",textContent:s.start+(s.end?"〜"+s.end:"")}),el("small",{textContent:note})]), btn]);
     })),
-    e.slots.some(s=>s.closed) ? el("a",{className:"askbtn",href:"https://line.me/R/oaMessage/@campusadd/?"+encodeURIComponent(`「${e.title}」について問い合わせです。`),textContent:"LINEで問い合わせる"}) : null
+    !e.apply && e.slots.some(s=>s.closed) ? el("a",{className:"askbtn",href:"https://line.me/R/oaMessage/@campusadd/?"+encodeURIComponent(`「${e.title}」について問い合わせです。`),textContent:"LINEで問い合わせる"}) : null
   ].filter(Boolean));
   show("detail");
 }
