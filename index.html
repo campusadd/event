@@ -150,6 +150,15 @@ button{font:inherit;color:inherit}
 .slot small{display:block;font-size:11px;color:var(--muted)}
 .slot .go{border:none;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:14px;padding:8px 16px;cursor:pointer;white-space:nowrap}
 .slot .go[disabled]{background:var(--soft);color:var(--muted);cursor:default}
+/* 1日に何コマもあるイベント：日にちの札＋時間のボタン */
+.slot.sday{grid-template-columns:56px 1fr}
+.tbtns{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:6px;margin-bottom:4px}
+.tbtn{display:grid;justify-items:center;gap:1px;border:1.5px solid var(--accent);background:var(--surface);color:var(--accent);border-radius:12px;padding:6px 4px;cursor:pointer;font:inherit}
+.tbtn b{font-family:var(--f-num);font-size:16px;font-weight:600;line-height:1.2}
+.tbtn small{font-size:10px;font-weight:700;color:inherit;line-height:1.2}
+.tbtn:hover:not([disabled]){background:var(--accent);color:var(--accent-ink)}
+.tbtn[disabled]{border-color:var(--line);background:var(--soft);color:var(--muted);cursor:default}
+.tbtn.mine{border-color:var(--accent);background:var(--accent);color:var(--accent-ink);opacity:.85}
 .askbtn{justify-self:start;display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--accent);color:var(--accent);background:transparent;border-radius:999px;padding:6px 16px;font-size:13px;font-weight:700;text-decoration:none}
 
 /* 申込フォーム（来館予約と同じ部品） */
@@ -402,6 +411,17 @@ function demoApi(){
 let DATA={events:[],me:{registered:false,apps:[]}}, EV=null, SLOT=null, FILTER="すべて", sending=false;
 const md = d => { const [,m,dd]=d.split("/").map(Number); return `${m}/${dd}`; };
 const whenText = s => `${md(s.date)}（${s.w}）${s.start}${s.end?"〜"+s.end:""}`;
+// 日ごとにまとめる：[{date, w, list:[slot…]}]（日付順）
+const byDay = slots => { const m=new Map(); slots.forEach(s=>{ if(!m.has(s.date)) m.set(s.date,{date:s.date,w:s.w,list:[]}); m.get(s.date).list.push(s); }); return [...m.values()]; };
+// 概要の「日時」：1日に何コマもあるイベントは、日にちを並べて「各日 15:00〜17:00」のように短く
+function whenSummary(slots){
+  const days=byDay(slots);
+  if(days.every(d=>d.list.length===1)) return slots.map(whenText).join("\n");
+  const span=d=>d.list[0].start+"〜"+(d.list[d.list.length-1].end||d.list[d.list.length-1].start);
+  const same=days.every(d=>span(d)===span(days[0]));
+  if(same) return days.map(d=>`${md(d.date)}（${d.w}）`).join("・")+"\n各日 "+span(days[0]);
+  return days.map(d=>`${md(d.date)}（${d.w}）${span(d)}`).join("\n");
+}
 // ロゴ・写真の欄は、画像のファイル名（.png .jpg など）かURLのときだけ使う（社名などが書いてあっても壊れた画像にしない）
 const isImg = v => /^https?:\/\/|^data:image\/|\.(png|jpe?g|webp|svg|gif)$/i.test(String(v||"").trim());
 // Googleドライブの共有リンク（…/file/d/ID/view など）は、画像として表示できる形に直す（元の画像はドライブの1か所に置いたまま使える）
@@ -481,7 +501,7 @@ function openDetail(e, push=true){
   EV=e;
   if(push) try{ history.replaceState(null,"","?e="+encodeURIComponent(e.id)+(DEMO&&/demo=1/.test(location.search)?"&demo=1":"")); }catch(x){}
   const already=mine(e), canTarget=targetOk(e);
-  const rows=[["日時",e.slots.length?e.slots.map(whenText).join("\n"):"申込ページで確認できます"],["会場",e.place||(e.apply?"申込ページで確認できます":"")],e.target?["対象",e.target]:null,e.company?["企業",(e.by?e.by+" ":"")+e.company]:null].filter(r=>r&&r[1]);
+  const rows=[["日時",e.slots.length?whenSummary(e.slots):"申込ページで確認できます"],["会場",e.place||(e.apply?"申込ページで確認できます":"")],e.target?["対象",e.target]:null,e.company?["企業",(e.by?e.by+" ":"")+e.company]:null].filter(r=>r&&r[1]);
   // スポンサー企業のイベント：申込は企業のページ（Campus Addでは受けない）
   const applyBox = e.apply ? el("div",{className:"applyout"},[
     el("a",{className:"cta",href:e.apply,target:"_blank",rel:"noopener",textContent:"企業のページで申し込む"}),
@@ -499,7 +519,21 @@ function openDetail(e, push=true){
     el("div",{className:"step",style:"margin:14px 0 0"},[el("span",{className:"bgword",ariaHidden:"true",textContent:"ENTRY"}),el("h2",{textContent:e.apply?"申し込む":"日程を選んで申し込む"})]),
     !canTarget?el("p",{className:"notice",textContent:`このイベントは${e.target}の方が対象です。`}):null,
     applyBox,
-    e.apply ? null : el("div",{className:"slots"},e.slots.map(s=>{
+    e.apply ? null : byDay(e.slots).some(d=>d.list.length>1) ? el("div",{className:"slots"},byDay(e.slots).map(dd=>{
+      // 1日に何コマもあるイベント（ゆうちょの日など）：日にちごとに1枚、時間のボタンを横に並べる
+      const [,m,d]=dd.date.split("/").map(Number);
+      const btns=dd.list.map(s=>{
+        const isMine=already.some(a=>a.date+"|"+a.start===s.key);
+        const st=isMine?"申込済み":s.closed?"受付終了":s.left<1?"満席":"空きあり";
+        const dis=isMine||s.closed||s.left<1||!canTarget||(!e.multi&&already.length>0);
+        const b=el("button",{type:"button",className:"tbtn"+(isMine?" mine":""),disabled:dis},[el("b",{textContent:s.start}),el("small",{textContent:st})]);
+        if(!dis) b.onclick=()=>openForm(e,s);
+        return b;
+      });
+      const dl=dd.list.find(s=>!s.closed);
+      return el("div",{className:"slot sday"},[el("span",{className:"dnum"},[el("span",{className:"m",textContent:m+"月"}),el("span",{className:"d",textContent:d}),el("span",{className:"w",textContent:dd.w})]),
+        el("div",{},[el("div",{className:"tbtns"},btns), el("small",{textContent:dl?"締切 "+dl.deadline:"締切を過ぎました"})])]);
+    })) : el("div",{className:"slots"},e.slots.map(s=>{
       const [,m,d]=s.date.split("/").map(Number);
       const isMine=already.some(a=>a.date+"|"+a.start===s.key);
       const label=isMine?"申込済み":s.closed?"受付終了":s.left<1?"満席":"申し込む";
