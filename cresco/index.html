@@ -192,14 +192,14 @@ footer{margin-top:40px;font-size:12px;color:var(--muted);text-align:center;displ
 /* 小見出しの前に番号（コード風） */
 main{counter-reset:sec}
 section>.sec-h h2{counter-increment:sec}
-section>.sec-h h2::before{content:counter(sec,decimal-leading-zero);font-family:var(--f-mono);font-size:13px;color:var(--accent);margin-right:10px;vertical-align:2px;border:1.5px solid var(--accent);border-radius:6px;padding:0 6px}
+section>.sec-h h2::before{content:"";display:inline-block;width:.85em;height:.85em;margin-right:8px;vertical-align:-.05em;background:var(--mark);clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%)}
 /* 目玉の話：吹き出し */
 .feature{border:none;background:var(--navy);color:#fff;border-radius:18px}
 .feature h3{color:#fff;font-size:20px}
 .feature h3::before{content:"Q.";font-family:var(--f-mono);color:#ffd84d;margin-right:8px}
 .feature p{color:#d6e2f2}
 .talks li{border-left:4px solid var(--accent)}
-.talks li::before{content:"#";font-family:var(--f-mono);color:var(--accent);margin-right:6px}
+.talks li::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-right:8px;vertical-align:.2em}
 .flow li b{font-family:var(--f-mono)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}html{scroll-behavior:auto}}
 .opening{pointer-events:none;opacity:.7}
@@ -216,7 +216,7 @@ section>.sec-h h2::before{content:counter(sec,decimal-leading-zero);font-family:
       <h1><small>現役SEトーク会</small>IT企業の選考を突破した先輩が話す、<em>「ここだけの」就活のリアル</em></h1>
       <div class="sub">選考なし・人事なし。先輩の「本音」を聞くだけの1時間</div>
       <div class="target">28卒以降 対象</div>
-      <p>Campus Addを使っていた先輩で、いまはIT企業（株式会社クレスコ）で働く現役のSEが来てくれます。<br>文系からSEになった先輩に、就活のことも仕事のことも、気になることを聞いてみませんか。</p>
+      <p>IT企業（株式会社クレスコ）で働く現役のSEが来てくれます。<br>就活のことも仕事のことも、気になることを聞いてみませんか。</p>
       <ul class="points">
         <li><b>12/3</b>木曜 16:30〜</li>
         <li><b>8名</b>先着順</li>
@@ -227,18 +227,18 @@ section>.sec-h h2::before{content:counter(sec,decimal-leading-zero);font-family:
     <div class="notice" id="notice" hidden></div>
 
     <section>
-      <div class="sec-h"><h2>今回いちばん聞いてほしい話</h2></div>
+      <div class="sec-h"><h2>この1時間で持ち帰れること</h2></div>
       <div class="feature">
         <span class="tag">文系の人ほど聞いてほしい</span>
         <h3>「なぜIT業界なの？」に、どう答える？</h3>
         <p>IT業界を選ぶ理由って、正直「働きやすそう」「待遇がよさそう」が本音だったりしますよね。でも選考では、志望する理由や「ITで実現したいこと」をどう伝えるかで、合否が大きく変わります。</p>
-        <p>文系からIT企業の選考を突破した先輩が、自分はどう考えて、どう伝えたのかを話してくれます。</p>
+        <p>IT企業の選考を突破した先輩が、自分はどう考えて、どう伝えたのかを話してくれます。</p>
       </div>
       <ul class="talks">
         <li>先輩の就活体験談</li>
         <li>IT企業の選考で見られていたこと</li>
         <li>SEって、実際なにをする仕事？</li>
-        <li>文系からSEになってどうだった？</li>
+        <li>SEになってみてどうだった？</li>
         <li>入社してからの失敗談</li>
         <li>平日と土日の過ごし方</li>
       </ul>
@@ -254,7 +254,7 @@ section>.sec-h h2::before{content:counter(sec,decimal-leading-zero);font-family:
     </section>
 
     <section>
-      <div class="sec-h"><h2>安心して参加してください</h2></div>
+      <div class="sec-h"><h2>気軽に参加できる4つの理由</h2></div>
       <ul class="safe">
         <li>採用や選考とは関係ありません</li>
         <li>人事・採用担当の方は来ません。話すのは現役のSEの先輩です</li>
