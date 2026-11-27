@@ -159,6 +159,8 @@ button{font:inherit;color:inherit}
 .tbtn:hover:not([disabled]){background:var(--accent);color:var(--accent-ink)}
 .tbtn[disabled]{border-color:var(--line);background:var(--soft);color:var(--muted);cursor:default}
 .tbtn.mine{border-color:var(--accent);background:var(--accent);color:var(--accent-ink);opacity:.85}
+.askbox{display:grid;gap:8px;justify-items:start;margin-top:4px}
+.askbox p{margin:0;font-size:13px;color:var(--muted)}
 .askbtn{justify-self:start;display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--accent);color:var(--accent);background:transparent;border-radius:999px;padding:6px 16px;font-size:13px;font-weight:700;text-decoration:none}
 
 /* 申込フォーム（来館予約と同じ部品） */
@@ -543,7 +545,10 @@ function openDetail(e, push=true){
       const note=s.closed?"締切を過ぎました":s.cap>0?(s.left<1?"定員に達しました":`残り${s.left}席`)+"・締切 "+s.deadline:"締切 "+s.deadline;
       return el("div",{className:"slot"},[el("span",{className:"dnum"},[el("span",{className:"m",textContent:m+"月"}),el("span",{className:"d",textContent:d}),el("span",{className:"w",textContent:s.w})]), el("span",{},[el("span",{className:"t",textContent:s.start+(s.end?"〜"+s.end:"")}),el("small",{textContent:note})]), btn]);
     })),
-    !e.apply && e.slots.some(s=>s.closed) ? el("a",{className:"askbtn",href:"https://line.me/R/oaMessage/@campusadd/?"+encodeURIComponent(`「${e.title}」について問い合わせです。`),textContent:"LINEで問い合わせる"}) : null
+    // 申し込めるコマが1つもないとき（締切・満席）だけ、LINEでの問い合わせを案内する
+    !e.apply && e.slots.length && e.slots.every(s=>s.closed||s.left<1) ? el("div",{className:"askbox"},[
+      el("p",{textContent:"締切を過ぎた・満席だけど参加したい人は、LINEで相談してください。"}),
+      el("a",{className:"askbtn",href:"https://line.me/R/oaMessage/@campusadd/?"+encodeURIComponent(`「${e.title}」について問い合わせです。`),textContent:"LINEで問い合わせる"})]) : null
   ].filter(Boolean));
   show("detail");
 }
