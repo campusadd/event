@@ -548,7 +548,7 @@ function openDetail(e, push=true){
     // 申し込めるコマが1つもないとき（締切・満席）だけ、LINEでの問い合わせを案内する
     !e.apply && e.slots.length && e.slots.every(s=>s.closed||s.left<1) ? el("div",{className:"askbox"},[
       el("p",{textContent:"締切を過ぎた・満席だけど参加したい人は、LINEで相談してください。"}),
-      el("a",{className:"askbtn",href:"https://line.me/R/oaMessage/@campusadd/?"+encodeURIComponent(`「${e.title}」について問い合わせです。`),textContent:"LINEで問い合わせる"})]) : null
+      el("a",{className:"askbtn",href:CONFIG.lineUrl||"https://lin.ee/wpTDw7N",target:"_blank",rel:"noopener",textContent:"LINEで問い合わせる"})]) : null
   ].filter(Boolean));
   show("detail");
 }
