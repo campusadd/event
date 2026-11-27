@@ -189,6 +189,13 @@ footer{margin-top:40px;font-size:12px;color:var(--muted);text-align:center;displ
 .hero .points li b{color:#fff}
 .hero .cta{background:#ffd84d;color:var(--navy);justify-self:stretch;max-width:none}
 .hero .brand{border-radius:6px}
+/* 企業ロゴ（イベント予約の管理表の「企業ロゴ」から読む）× Campus Add */
+.logos{display:flex;align-items:center;gap:8px}
+.logos .brand{width:150px;height:25px;padding:8px 10px}
+.logos .brand img{width:185px;height:61px;margin:-17px 0 0 -17px}
+.logos .x{color:#9cc3f5;font-family:var(--f-num);font-size:16px;font-weight:600}
+.co{background:#fff;border-radius:6px;height:41px;padding:8px 12px;display:flex;align-items:center;box-sizing:border-box}
+.co img{display:block;height:22px;width:auto;max-width:120px;object-fit:contain}
 /* 小見出しの前に番号（コード風） */
 main{counter-reset:sec}
 section>.sec-h h2{counter-increment:sec}
@@ -212,7 +219,7 @@ section>.sec-h h2::before{content:"";display:inline-block;width:.85em;height:.85
   <main id="v-home">
     <header class="hero">
       <div class="eyebrow">ITに興味あってもなくてもOK！</div>
-      <div class="brand"><img src="campus-add-logo.png" alt="Campus Add" width="300" height="98"></div>
+      <div class="logos"><div class="co" id="co" hidden><img id="coLogo" alt="CRESCO"></div><span class="x" id="coX" hidden>×</span><div class="brand"><img src="campus-add-logo.png" alt="Campus Add" width="300" height="98"></div></div>
       <h1><small>現役SEトーク会</small>IT企業の選考を突破した先輩が話す、<em>「ここだけの」就活のリアル</em></h1>
       <div class="sub">選考なし・人事なし。先輩の「本音」を聞くだけの1時間</div>
       <div class="target">28卒以降 対象</div>
@@ -327,7 +334,9 @@ const $ = q => document.querySelector(q);
 ["#go1", "#go2"].forEach(q => { $(q).href = APPLY; });
 // 残りの席を表示（読めなくても、申込ボタンはそのまま使える）
 fetch(API).then(r => r.json()).then(d => {
-  const ev = (d.events || []).find(e => e.id === EVENT_ID); if (!ev || !ev.slots || !ev.slots.length) return;
+  const ev = (d.events || []).find(e => e.id === EVENT_ID);
+  if (ev && ev.logo) { $("#coLogo").src = ev.logo; $("#co").hidden = false; $("#coX").hidden = false; }
+  if (!ev || !ev.slots || !ev.slots.length) return;
   const sl = ev.slots[0], p = $("#st1");
   let t = "受付中", cls = "ok";
   if (sl.closed) { t = "受付終了"; cls = "full"; }
